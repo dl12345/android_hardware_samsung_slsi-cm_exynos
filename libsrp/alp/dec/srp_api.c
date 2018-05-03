@@ -38,7 +38,7 @@
 
 #include "srp_api.h"
 
-#define LOG_NDEBUG 1
+/* #define LOG_NDEBUG 1 */
 #define LOG_TAG "libsrpapi"
 #include <utils/Log.h>
 

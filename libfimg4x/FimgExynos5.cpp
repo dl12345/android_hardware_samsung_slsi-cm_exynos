@@ -17,7 +17,7 @@
 **
 */
 
-#define LOG_NDEBUG 0
+/* #define LOG_NDEBUG 0 */
 #define LOG_TAG "FimgExynos5"
 #include <utils/Log.h>
 

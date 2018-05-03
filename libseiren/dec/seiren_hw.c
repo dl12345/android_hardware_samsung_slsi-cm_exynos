@@ -30,7 +30,7 @@
 
 #include "seiren_hw.h"
 
-#define LOG_NDEBUG 1
+/* #define LOG_NDEBUG 1 */
 #define LOG_TAG "libseirenhw"
 #include <utils/Log.h>
 
