@@ -15,7 +15,7 @@
 ** limitations under the License.
 */
 
-/* #define LOG_NDEBUG 0 */
+#define LOG_NDEBUG 1
 #define LOG_TAG "ExynosCameraInterface"
 #include <cutils/log.h>
 
@@ -65,14 +65,14 @@ static int HAL_camera_device_open(
 
         g_cam_device[cameraId]->ops = &camera_device_ops;
 
-        ALOGE("DEBUG(%s):open camera %s", __FUNCTION__, id);
+        ALOGV("DEBUG(%s):open camera %s", __FUNCTION__, id);
         g_cam_device[cameraId]->priv = new ExynosCamera(cameraId, g_cam_device[cameraId]);
         *device = (hw_device_t *)g_cam_device[cameraId];
-        ALOGI("INFO(%s[%d]):camera(%d) out from new g_cam_device[%d]->priv()",
+        ALOGV("INFO(%s[%d]):camera(%d) out from new g_cam_device[%d]->priv()",
             __FUNCTION__, __LINE__, cameraId, cameraId);
 
         g_cam_openLock[cameraId].unlock();
-        ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+        ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
     } else {
         ALOGE("DEBUG(%s):camera(%s) open fail - must front camera open first",
             __FUNCTION__, id);
@@ -83,7 +83,7 @@ done:
     cam_stateLock[cameraId].lock();
     cam_state[cameraId] = state;
     cam_stateLock[cameraId].unlock();
-    ALOGI("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
     return 0;
 }
 
@@ -94,13 +94,13 @@ static int HAL_camera_device_close(struct hw_device_t* device)
     uint32_t cameraId;
     enum CAMERA_STATE state;
 
-    ALOGI("INFO(%s[%d]): in", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): in", __FUNCTION__, __LINE__);
 
     if (device) {
         camera_device_t *cam_device = (camera_device_t *)device;
         cameraId = obj(cam_device)->getCameraId();
 
-        ALOGI("INFO(%s[%d]):camera(%d)", __FUNCTION__, __LINE__, cameraId);
+        ALOGV("INFO(%s[%d]):camera(%d)", __FUNCTION__, __LINE__, cameraId);
 
         state = CAMERA_CLOSED;
         if (check_camera_state(state, cameraId) == false) {
@@ -110,10 +110,10 @@ static int HAL_camera_device_close(struct hw_device_t* device)
         }
 
         g_cam_openLock[cameraId].lock();
-        ALOGI("INFO(%s[%d]):camera(%d) locked..", __FUNCTION__, __LINE__, cameraId);
+        ALOGV("INFO(%s[%d]):camera(%d) locked..", __FUNCTION__, __LINE__, cameraId);
         g_cam_device[cameraId] = NULL;
         g_cam_openLock[cameraId].unlock();
-        ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+        ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
 
         delete static_cast<ExynosCamera *>(cam_device->priv);
         free(cam_device);
@@ -121,10 +121,10 @@ static int HAL_camera_device_close(struct hw_device_t* device)
         cam_stateLock[cameraId].lock();
         cam_state[cameraId] = state;
         cam_stateLock[cameraId].unlock();
-        ALOGI("INFO(%s[%d]):camera(%d)", __FUNCTION__, __LINE__, cameraId);
+        ALOGV("INFO(%s[%d]):camera(%d)", __FUNCTION__, __LINE__, cameraId);
     }
 
-    ALOGI("INFO(%s[%d]): out", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): out", __FUNCTION__, __LINE__);
     return 0;
 }
 
@@ -137,9 +137,9 @@ static int HAL_camera_device_set_preview_window(
     static int ret;
     uint32_t cameraId = obj(dev)->getCameraId();
 
-    ALOGI("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
     ret = obj(dev)->setPreviewWindow(buf);
-    ALOGI("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
     return ret;
 }
 
@@ -190,7 +190,7 @@ static int HAL_camera_device_start_preview(struct camera_device *dev)
     uint32_t cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-    ALOGI("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
 
     state = CAMERA_PREVIEW;
     if (check_camera_state(state, cameraId) == false) {
@@ -202,21 +202,21 @@ static int HAL_camera_device_start_preview(struct camera_device *dev)
     g_cam_previewLock[cameraId].lock();
 
     ret = obj(dev)->startPreview();
-    ALOGI("INFO(%s[%d]):camera(%d) out from startPreview()",
+    ALOGV("INFO(%s[%d]):camera(%d) out from startPreview()",
         __FUNCTION__, __LINE__, cameraId);
 
     g_cam_previewLock[cameraId].unlock();
 
-    ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
 
     if (ret == OK) {
         cam_stateLock[cameraId].lock();
         cam_state[cameraId] = state;
         cam_stateLock[cameraId].unlock();
-        ALOGI("INFO(%s[%d]):camera(%d) out (startPreview succeeded)",
+        ALOGV("INFO(%s[%d]):camera(%d) out (startPreview succeeded)",
             __FUNCTION__, __LINE__, cameraId);
     } else {
-        ALOGI("INFO(%s[%d]):camera(%d) out (startPreview FAILED)",
+        ALOGV("INFO(%s[%d]):camera(%d) out (startPreview FAILED)",
             __FUNCTION__, __LINE__, cameraId);
     }
     return ret;
@@ -229,7 +229,7 @@ static void HAL_camera_device_stop_preview(struct camera_device *dev)
     uint32_t cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-    ALOGI("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
 /* HACK : If camera in recording state, */
 /*        CameraService have to call the stop_recording before the stop_preview */
 #if 1
@@ -262,17 +262,17 @@ static void HAL_camera_device_stop_preview(struct camera_device *dev)
     g_cam_previewLock[cameraId].lock();
 
     obj(dev)->stopPreview();
-    ALOGI("INFO(%s[%d]):camera(%d) out from stopPreview()",
+    ALOGV("INFO(%s[%d]):camera(%d) out from stopPreview()",
         __FUNCTION__, __LINE__, cameraId);
 
     g_cam_previewLock[cameraId].unlock();
 
-    ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
 
     cam_stateLock[cameraId].lock();
     cam_state[cameraId] = state;
     cam_stateLock[cameraId].unlock();
-    ALOGI("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
 }
 
 static int HAL_camera_device_preview_enabled(struct camera_device *dev)
@@ -301,7 +301,7 @@ static int HAL_camera_device_start_recording(struct camera_device *dev)
     uint32_t cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-    ALOGI("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
  
     state = CAMERA_RECORDING;
     if (check_camera_state(state, cameraId) == false) {
@@ -313,21 +313,21 @@ static int HAL_camera_device_start_recording(struct camera_device *dev)
     g_cam_recordingLock[cameraId].lock();
 
     ret = obj(dev)->startRecording();
-    ALOGI("INFO(%s[%d]):camera(%d) out from startRecording()",
+    ALOGV("INFO(%s[%d]):camera(%d) out from startRecording()",
         __FUNCTION__, __LINE__, cameraId);
 
     g_cam_recordingLock[cameraId].unlock();
 
-    ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
 
     if (ret == OK) {
         cam_stateLock[cameraId].lock();
         cam_state[cameraId] = state;
         cam_stateLock[cameraId].unlock();
-        ALOGI("INFO(%s[%d]):camera(%d) out (startRecording succeeded)",
+        ALOGV("INFO(%s[%d]):camera(%d) out (startRecording succeeded)",
             __FUNCTION__, __LINE__, cameraId);
     } else {
-        ALOGI("INFO(%s[%d]):camera(%d) out (startRecording FAILED)",
+        ALOGV("INFO(%s[%d]):camera(%d) out (startRecording FAILED)",
             __FUNCTION__, __LINE__, cameraId);
     }
     return ret;
@@ -340,7 +340,7 @@ static void HAL_camera_device_stop_recording(struct camera_device *dev)
     uint32_t cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-    ALOGI("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
+    ALOGI("VNFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
 
     state = CAMERA_RECORDINGSTOPPED;
     if (check_camera_state(state, cameraId) == false) {
@@ -351,17 +351,17 @@ static void HAL_camera_device_stop_recording(struct camera_device *dev)
     g_cam_recordingLock[cameraId].lock();
 
     obj(dev)->stopRecording();
-    ALOGI("INFO(%s[%d]):camera(%d) out from stopRecording()",
+    ALOGV("INFO(%s[%d]):camera(%d) out from stopRecording()",
         __FUNCTION__, __LINE__, cameraId);
 
     g_cam_recordingLock[cameraId].unlock();
 
-    ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
 
     cam_stateLock[cameraId].lock();
     cam_state[cameraId] = state;
     cam_stateLock[cameraId].unlock();
-    ALOGI("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
 }
 
 static int HAL_camera_device_recording_enabled(struct camera_device *dev)
@@ -465,7 +465,7 @@ static void HAL_camera_device_release(struct camera_device *dev)
     uint32_t cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-    ALOGI("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) in", __FUNCTION__, __LINE__, cameraId);
 
     state = CAMERA_RELEASED;
     if (check_camera_state(state, cameraId) == false) {
@@ -477,17 +477,17 @@ static void HAL_camera_device_release(struct camera_device *dev)
     g_cam_openLock[cameraId].lock();
 
     obj(dev)->release();
-    ALOGI("INFO(%s[%d]):camera(%d) out from release()",
+    ALOGV("INFO(%s[%d]):camera(%d) out from release()",
         __FUNCTION__, __LINE__, cameraId);
 
     g_cam_openLock[cameraId].unlock();
 
-    ALOGI("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) unlocked..", __FUNCTION__, __LINE__, cameraId);
 
     cam_stateLock[cameraId].lock();
     cam_state[cameraId] = state;
     cam_stateLock[cameraId].unlock();
-    ALOGI("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
+    ALOGV("INFO(%s[%d]):camera(%d) out", __FUNCTION__, __LINE__, cameraId);
 }
 
 static int HAL_camera_device_dump(struct camera_device *dev, int fd)

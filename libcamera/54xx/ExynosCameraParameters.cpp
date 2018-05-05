@@ -15,7 +15,7 @@
 ** limitations under the License.
 */
 
-/* #define LOG_NDEBUG 0 */
+#define LOG_NDEBUG 1
 #define LOG_TAG "ExynosCameraParameters"
 #include <cutils/log.h>
 
@@ -337,14 +337,14 @@ status_t ExynosCameraParameters::setParameters(const CameraParameters& params)
 
 CameraParameters ExynosCameraParameters::getParameters() const
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     return m_params;
 }
 
 void ExynosCameraParameters::setDefaultCameraInfo(void)
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
     m_setHwSensorSize(m_staticInfo->maxSensorW, m_staticInfo->maxSensorH);
     m_setHwPreviewSize(m_staticInfo->maxPreviewW, m_staticInfo->maxPreviewH);
     m_setHwPictureSize(m_staticInfo->maxPictureW, m_staticInfo->maxPictureH);
@@ -355,7 +355,7 @@ void ExynosCameraParameters::setDefaultCameraInfo(void)
 
 void ExynosCameraParameters::setDefaultParameter(void)
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     status_t ret = NO_ERROR;
     CameraParameters p;
@@ -406,10 +406,10 @@ void ExynosCameraParameters::setDefaultParameter(void)
 
     /* Video Format */
     if (getAdaptiveCSCRecording() == true) {
-        ALOGI("INFO(%s[%d]):video_frame_foramt == YUV420SP_NV21", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):video_frame_foramt == YUV420SP_NV21", __FUNCTION__, __LINE__);
         p.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
     } else {
-        ALOGI("INFO(%s[%d]):video_frame_foramt == YUV420SP", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):video_frame_foramt == YUV420SP", __FUNCTION__, __LINE__);
         p.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
     }
 
@@ -822,7 +822,7 @@ void ExynosCameraParameters::setDefaultParameter(void)
 #ifdef TEST_GED_HIGH_SPEED_RECORDING
     maxFpsRange = 120;
 #endif
-    ALOGI("INFO(%s[%d]):minFpsRange=%d, maxFpsRange=%d", "getPreviewFpsRange", __LINE__, (int)minFpsRange, (int)maxFpsRange);
+    ALOGV("INFO(%s[%d]):minFpsRange=%d, maxFpsRange=%d", "getPreviewFpsRange", __LINE__, (int)minFpsRange, (int)maxFpsRange);
     int minFps = (minFpsRange == 0) ? 0 : (int)minFpsRange;
     int maxFps = (maxFpsRange == 0) ? 0 : (int)maxFpsRange;
 
@@ -841,7 +841,7 @@ void ExynosCameraParameters::setDefaultParameter(void)
 
     tempStr.setTo("");
     getSupportedFpsList(tempStr, minFpsRange, maxFpsRange);
-    ALOGI("INFO(%s):supportedFpsList=%s", "setDefaultParameter", tempStr.string());
+    ALOGV("INFO(%s):supportedFpsList=%s", "setDefaultParameter", tempStr.string());
     p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FPS_RANGE, tempStr.string());
     /* p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FPS_RANGE, "(15000,30000),(30000,30000)"); */
 
@@ -1107,7 +1107,7 @@ status_t ExynosCameraParameters::checkPreviewFpsRange(const CameraParameters& pa
     }
 
     getPreviewFpsRange(&curMinFps, &curMaxFps);
-    ALOGI("INFO(%s):curFpsRange[Min=%d, Max=%d], newFpsRange[Min=%d, Max=%d], [curFrameRate=%d]",
+    ALOGV("INFO(%s):curFpsRange[Min=%d, Max=%d], newFpsRange[Min=%d, Max=%d], [curFrameRate=%d]",
         "checkPreviewFpsRange", curMinFps, curMaxFps, newMinFps, newMaxFps, m_params.getPreviewFrameRate());
 
     if (curMinFps != (uint32_t)newMinFps || curMaxFps != (uint32_t)newMaxFps) {
@@ -1117,8 +1117,8 @@ status_t ExynosCameraParameters::checkPreviewFpsRange(const CameraParameters& pa
         memset (newFpsRange, 0, 256);
         snprintf(newFpsRange, 256, "%d,%d", newMinFps * 1000, newMaxFps * 1000);
 
-        ALOGI("DEBUG(%s):set PreviewFpsRange(%s)", __FUNCTION__, newFpsRange);
-        ALOGI("DEBUG(%s):set PreviewFrameRate(curFps=%d->newFps=%d)", __FUNCTION__, m_params.getPreviewFrameRate(), newMaxFps);
+        ALOGV("DEBUG(%s):set PreviewFpsRange(%s)", __FUNCTION__, newFpsRange);
+        ALOGV("DEBUG(%s):set PreviewFrameRate(curFps=%d->newFps=%d)", __FUNCTION__, m_params.getPreviewFrameRate(), newMaxFps);
         m_params.set(CameraParameters::KEY_PREVIEW_FPS_RANGE, newFpsRange);
         m_params.setPreviewFrameRate(newMaxFps);
     }
@@ -1404,7 +1404,7 @@ status_t ExynosCameraParameters::checkVideoSize(const CameraParameters& params)
         return BAD_VALUE;
     }
 
-    ALOGI("INFO(%s):newVideo Size (%dx%d), ratioId(%d)",
+    ALOGV("INFO(%s):newVideo Size (%dx%d), ratioId(%d)",
         "setParameters", newVideoW, newVideoH, m_cameraInfo.videoSizeRatioId);
     m_setVideoSize(newVideoW, newVideoH);
     m_params.setVideoSize(newVideoW, newVideoH);
@@ -1521,7 +1521,7 @@ status_t ExynosCameraParameters::checkFastFpsMode(const CameraParameters& params
 
     getPreviewFpsRange(&curMinFps, &curMaxFps);
 
-    ALOGI("INFO(%s):curFpsRange[Min=%d, Max=%d], [curFrameRate=%d]",
+    ALOGV("INFO(%s):curFpsRange[Min=%d, Max=%d], [curFrameRate=%d]",
         "checkPreviewFpsRange", curMinFps, curMaxFps, m_params.getPreviewFrameRate());
 
     setFastFpsMode(fastFpsMode);
@@ -1566,7 +1566,7 @@ status_t ExynosCameraParameters::checkFastFpsMode(const CameraParameters& params
         m_setHighSpeedRecording(flagHighSpeed);
         m_setPreviewFpsRange(newMinFps, newMaxFps);
 
-        ALOGI("INFO(%s):m_setPreviewFpsRange(newFpsRange[Min=%d, Max=%d])", "checkFastFpsMode", newMinFps, newMaxFps);
+        ALOGV("INFO(%s):m_setPreviewFpsRange(newFpsRange[Min=%d, Max=%d])", "checkFastFpsMode", newMinFps, newMaxFps);
 #ifdef TEST_GED_HIGH_SPEED_RECORDING
         m_params.setPreviewFrameRate(newMaxFps);
         ALOGD("DEBUG(%s):setPreviewFrameRate (newMaxFps=%d)", "checkFastFpsMode", newMaxFps);
@@ -1774,11 +1774,11 @@ status_t ExynosCameraParameters::checkPreviewSize(const CameraParameters& params
         return BAD_VALUE;
     }
 
-    ALOGI("INFO(%s):Cur preview size(%dx%d)", "setParameters", curPreviewW, curPreviewH);
-    ALOGI("INFO(%s):Cur preview size(%dx%d)", "setParameters", curHwPreviewW, curHwPreviewH);
-    ALOGI("INFO(%s):param.preview size(%dx%d)", "setParameters", previewW, previewH);
-    ALOGI("INFO(%s):Adjust preview size(%dx%d), ratioId(%d)", "setParameters", newPreviewW, newPreviewH, m_cameraInfo.previewSizeRatioId);
-    ALOGI("INFO(%s):Calibrated preview size(%dx%d)", "setParameters", newCalPreviewW, newCalPreviewH);
+    ALOGV("INFO(%s):Cur preview size(%dx%d)", "setParameters", curPreviewW, curPreviewH);
+    ALOGV("INFO(%s):Cur preview size(%dx%d)", "setParameters", curHwPreviewW, curHwPreviewH);
+    ALOGV("INFO(%s):param.preview size(%dx%d)", "setParameters", previewW, previewH);
+    ALOGV("INFO(%s):Adjust preview size(%dx%d), ratioId(%d)", "setParameters", newPreviewW, newPreviewH, m_cameraInfo.previewSizeRatioId);
+    ALOGV("INFO(%s):Calibrated preview size(%dx%d)", "setParameters", newCalPreviewW, newCalPreviewH);
 
     if (curPreviewW != newCalPreviewW || curPreviewH != newCalPreviewH ||
         curHwPreviewW != newCalPreviewW || curHwPreviewH != newCalPreviewH ||
@@ -1955,7 +1955,7 @@ status_t ExynosCameraParameters::checkPreviewFormat(const CameraParameters& para
     m_params.setPreviewFormat(strNewPreviewFormat);
     if (curHwPreviewFormat != hwPreviewFormat) {
         m_setHwPreviewFormat(hwPreviewFormat);
-        ALOGI("INFO(%s[%d]): preview format changed cur(%s) -> new(%s)", "Parameters", __LINE__, strCurPreviewFormat, strNewPreviewFormat);
+        ALOGV("INFO(%s[%d]): preview format changed cur(%s) -> new(%s)", "Parameters", __LINE__, strCurPreviewFormat, strNewPreviewFormat);
 
         if (getPreviewRunning() == true) {
             ALOGD("DEBUG(%s[%d]):setRestartPreviewChecked true", __FUNCTION__, __LINE__);
@@ -2090,7 +2090,7 @@ void ExynosCameraParameters::updateHwSensorSize(void)
         newHwSensorW = sizeList[SENSOR_W];
         newHwSensorH = sizeList[SENSOR_H];
 
-        ALOGI("INFO(%s):TEA [%d/%d]", __FUNCTION__, newHwSensorW, newHwSensorH);
+        ALOGV("INFO(%s):TEA [%d/%d]", __FUNCTION__, newHwSensorW, newHwSensorH);
     } else if (getScalableSensorMode() == true) {
         m_getScalableSensorSize(&newHwSensorW, &newHwSensorH);
     } else {
@@ -2098,10 +2098,10 @@ void ExynosCameraParameters::updateHwSensorSize(void)
     }
 
     getHwSensorSize(&curHwSensorW, &curHwSensorH);
-    ALOGI("INFO(%s):curHwSensor size(%dx%d) newHwSensor size(%dx%d)", __FUNCTION__, curHwSensorW, curHwSensorH, newHwSensorW, newHwSensorH);
+    ALOGV("INFO(%s):curHwSensor size(%dx%d) newHwSensor size(%dx%d)", __FUNCTION__, curHwSensorW, curHwSensorH, newHwSensorW, newHwSensorH);
     if (curHwSensorW != newHwSensorW || curHwSensorH != newHwSensorH) {
         m_setHwSensorSize(newHwSensorW, newHwSensorH);
-        ALOGI("INFO(%s):newHwSensor size(%dx%d)", __FUNCTION__, newHwSensorW, newHwSensorH);
+        ALOGV("INFO(%s):newHwSensor size(%dx%d)", __FUNCTION__, newHwSensorW, newHwSensorH);
     }
 }
 
@@ -2259,7 +2259,7 @@ status_t ExynosCameraParameters::checkPictureSize(const CameraParameters& params
 
         return INVALID_OPERATION;
     }
-    ALOGI("INFO(%s):newPicture Size (%dx%d), ratioId(%d)",
+    ALOGV("INFO(%s):newPicture Size (%dx%d), ratioId(%d)",
         "setParameters", newPictureW, newPictureH, m_cameraInfo.pictureSizeRatioId);
 
     getPictureSize(&curPictureW, &curPictureH);
@@ -2268,9 +2268,9 @@ status_t ExynosCameraParameters::checkPictureSize(const CameraParameters& params
     if (curPictureW != newPictureW || curPictureH != newPictureH ||
         curHwPictureW != newHwPictureW || curHwPictureH != newHwPictureH) {
 
-        ALOGI("INFO(%s[%d]): Picture size changed: cur(%dx%d) -> new(%dx%d)",
+        ALOGV("INFO(%s[%d]): Picture size changed: cur(%dx%d) -> new(%dx%d)",
                 "setParameters", __LINE__, curPictureW, curPictureH, newPictureW, newPictureH);
-        ALOGI("INFO(%s[%d]): HwPicture size changed: cur(%dx%d) -> new(%dx%d)",
+        ALOGV("INFO(%s[%d]): HwPicture size changed: cur(%dx%d) -> new(%dx%d)",
                 "setParameters", __LINE__, curHwPictureW, curHwPictureH, newHwPictureW, newHwPictureH);
 
         m_setPictureSize(newPictureW, newPictureH);
@@ -2437,7 +2437,7 @@ status_t ExynosCameraParameters::checkPictureFormat(const CameraParameters& para
     curPictureFormat = getPictureFormat();
 
     if (newPictureFormat != curPictureFormat) {
-        ALOGI("INFO(%s[%d]): Picture format changed, cur(%s) -> new(%s)", "Parameters", __LINE__, strCurPictureFormat, strNewPictureFormat);
+        ALOGV("INFO(%s[%d]): Picture format changed, cur(%s) -> new(%s)", "Parameters", __LINE__, strCurPictureFormat, strNewPictureFormat);
         m_setPictureFormat(newPictureFormat);
         m_params.setPictureFormat(strNewPictureFormat);
     }
@@ -2750,9 +2750,9 @@ status_t ExynosCameraParameters::m_setParamCropRegion(
     newW = srcW - (newX * 2);
     newH = srcH - (newY * 2);
 
-    ALOGI("DEBUG(%s):size0(%d, %d, %d, %d)",
+    ALOGV("DEBUG(%s):size0(%d, %d, %d, %d)",
         __FUNCTION__, srcW, srcH, dstW, dstH);
-    ALOGI("DEBUG(%s):size(%d, %d, %d, %d), level(%d)",
+    ALOGV("DEBUG(%s):size(%d, %d, %d, %d), level(%d)",
         __FUNCTION__, newX, newY, newW, newH, zoom);
 
     m_setHwBayerCropRegion(newW, newH, newX, newY);
@@ -5998,7 +5998,7 @@ void ExynosCameraParameters::m_getSetfileYuvRange(bool flagReprocessing, int *se
 
                     if(getShotMode() == SHOT_MODE_NIGHT) {
                         currentSetfile = ISS_SUB_SCENARIO_DUAL_STILL;
-                        ALOGI("m_getSetfileYuvRange: currentSetfile = %d", currentSetfile);
+                        ALOGV("m_getSetfileYuvRange: currentSetfile = %d", currentSetfile);
                     }
                 }
             }

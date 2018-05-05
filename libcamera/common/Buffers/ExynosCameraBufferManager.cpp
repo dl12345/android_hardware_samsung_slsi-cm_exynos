@@ -1890,14 +1890,14 @@ int GrallocExynosCameraBufferManager::getBufferCount(void)
 
 int GrallocExynosCameraBufferManager::getBufStride(void)
 {
-    ALOGI("INFO(%s):bufStride=%d", __FUNCTION__, m_bufStride);
+    ALOGV("INFO(%s):bufStride=%d", __FUNCTION__, m_bufStride);
     return m_bufStride;
 }
 
 void GrallocExynosCameraBufferManager::printBufferState(void)
 {
     for (int i = 0; i < m_allocatedBufCount; i++) {
-        CLOGI("INFO(%s[%d]):m_buffer[%d].fd[0]=%d, position=%d, permission=%d, lock=%d]",
+        ALOGV("INFO(%s[%d]):m_buffer[%d].fd[0]=%d, position=%d, permission=%d, lock=%d]",
             __FUNCTION__, __LINE__, i, m_buffer[i].fd[0],
             m_buffer[i].status.position, m_buffer[i].status.permission, m_handleIsLocked[i]);
     }
@@ -1907,7 +1907,7 @@ void GrallocExynosCameraBufferManager::printBufferState(void)
 
 void GrallocExynosCameraBufferManager::printBufferState(int bufIndex, int planeIndex)
 {
-    CLOGI("INFO(%s[%d]):m_buffer[%d].fd[%d]=%d, .status.permission=%d, lock=%d]",
+    ALOGV("INFO(%s[%d]):m_buffer[%d].fd[%d]=%d, .status.permission=%d, lock=%d]",
         __FUNCTION__, __LINE__, bufIndex, planeIndex, m_buffer[bufIndex].fd[planeIndex],
         m_buffer[bufIndex].status.permission, m_handleIsLocked[bufIndex]);
 

@@ -15,7 +15,7 @@
 ** limitations under the License.
 */
 
-/* #define LOG_NDEBUG 0 */
+#define LOG_NDEBUG 1
 #define LOG_TAG "ExynosCamera"
 #include <cutils/log.h>
 
@@ -278,7 +278,7 @@ ExynosCamera::~ExynosCamera()
 
 void ExynosCamera::release()
 {
-    ALOGI("INFO(%s[%d]): -IN-", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): -IN-", __FUNCTION__, __LINE__);
     int ret = 0;
 
     if (m_previewFrameFactory != NULL) {
@@ -466,7 +466,7 @@ void ExynosCamera::release()
     m_isFirstStart = true;
     m_previewBufferCount = NUM_PREVIEW_BUFFERS;
 
-    ALOGI("INFO(%s[%d]): -OUT-", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): -OUT-", __FUNCTION__, __LINE__);
 }
 
 int ExynosCamera::getCameraId() const
@@ -501,7 +501,7 @@ bool ExynosCamera::isSccCapture(void) const
 }
 status_t ExynosCamera::setPreviewWindow(preview_stream_ops *w)
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     status_t ret = NO_ERROR;
     int width, height;
@@ -570,7 +570,7 @@ void ExynosCamera::setCallbacks(
         camera_request_memory get_memory,
         void *user)
 {
-    ALOGI("INFO(%s[%d]): -IN-", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): -IN-", __FUNCTION__, __LINE__);
 
     int ret = 0;
 
@@ -621,7 +621,7 @@ status_t ExynosCamera::startPreview()
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
 
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     int ret = 0;
     int32_t skipFrameCount = INITIAL_SKIP_FRAME;
@@ -664,7 +664,7 @@ status_t ExynosCamera::startPreview()
             m_previewBufferCount = m_exynosCameraParameters->getPreviewBufferCount();
         }
 
-        ALOGI("INFO(%s[%d]):setBuffersThread is run", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):setBuffersThread is run", __FUNCTION__, __LINE__);
         m_setBuffersThread->run(PRIORITY_DEFAULT);
 
         if (m_captureSelector == NULL) {
@@ -817,7 +817,7 @@ err:
 
 void ExynosCamera::stopPreview()
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
     int ret = 0;
 
     ExynosCameraActivityFlash *m_flashMgr = m_exynosCameraActivityControl->getFlashMgr();
@@ -968,7 +968,7 @@ void ExynosCamera::stopPreview()
 
 bool ExynosCamera::previewEnabled()
 {
-    ALOGI("INFO(%s[%d]):m_previewEnabled=%d",
+    ALOGV("INFO(%s[%d]):m_previewEnabled=%d",
         __FUNCTION__, __LINE__, (int)m_previewEnabled);
 
     /* in scalable mode, we should controll out state */
@@ -982,14 +982,14 @@ bool ExynosCamera::previewEnabled()
 
 status_t ExynosCamera::storeMetaDataInBuffers(bool enable)
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     return OK;
 }
 
 status_t ExynosCamera::startRecording()
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     int ret = 0;
     ExynosCameraActivityAutofocus *autoFocusMgr = m_exynosCameraActivityControl->getAutoFocusMgr();
@@ -1031,7 +1031,7 @@ func_exit:
 
 void ExynosCamera::stopRecording()
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     int ret = 0;
     ExynosCameraActivityAutofocus *autoFocusMgr = m_exynosCameraActivityControl->getAutoFocusMgr();
@@ -1065,7 +1065,7 @@ void ExynosCamera::stopRecording()
 
 bool ExynosCamera::recordingEnabled()
 {
-    ALOGI("INFO(%s[%d]):m_recordingEnabled=%d",
+    ALOGV("INFO(%s[%d]):m_recordingEnabled=%d",
         __FUNCTION__, __LINE__, (int)m_recordingEnabled);
 
     return m_recordingEnabled;
@@ -1111,7 +1111,7 @@ void ExynosCamera::releaseRecordingFrame(const void *opaque)
 
 status_t ExynosCamera::autoFocus()
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     /* waiting previous AF is over */
     m_autoFocusLock.lock();
@@ -1134,7 +1134,7 @@ status_t ExynosCamera::autoFocus()
 
 status_t ExynosCamera::cancelAutoFocus()
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     m_autoFocusRunning = false;
 
@@ -1172,7 +1172,7 @@ status_t ExynosCamera::takePicture()
     while ((m_resetPreview == true) && (retryCount < 10)) {
         usleep(200000);
         retryCount ++;
-        ALOGI("INFO(%s[%d]) retryCount(%d) m_resetPreview(%d)", __FUNCTION__, __LINE__, retryCount, m_resetPreview);
+        ALOGV("INFO(%s[%d]) retryCount(%d) m_resetPreview(%d)", __FUNCTION__, __LINE__, retryCount, m_resetPreview);
     }
 
     if (takePictureCount < 0) {
@@ -1200,7 +1200,7 @@ status_t ExynosCamera::takePicture()
             m_takePictureCounter.setCount(1);
     }
 
-    ALOGI("INFO(%s[%d]): takePicture start m_takePictureCounter(%d), seriesShotCount(%d)",
+    ALOGV("INFO(%s[%d]): takePicture start m_takePictureCounter(%d), seriesShotCount(%d)",
         __FUNCTION__, __LINE__, m_takePictureCounter.getCount(), seriesShotCount);
 
     if(m_exynosCameraParameters->getShotMode() == SHOT_MODE_RICH_TONE) {
@@ -1271,7 +1271,7 @@ status_t ExynosCamera::takePicture()
             m_exynosCameraParameters->setScalableSensorMode(true);
         }
 
-        ALOGI("INFO(%s[%d]): takePicture enabled, takePictureCount(%d)",
+        ALOGV("INFO(%s[%d]): takePicture enabled, takePictureCount(%d)",
                 __FUNCTION__, __LINE__, m_takePictureCounter.getCount());
         m_pictureEnabled = true;
         m_takePictureCounter.decCount();
@@ -1341,7 +1341,7 @@ status_t ExynosCamera::takePicture()
                 return INVALID_OPERATION;
             }
         }
-        ALOGI("INFO(%s[%d]): series shot takePicture, takePictureCount(%d)",
+        ALOGV("INFO(%s[%d]): series shot takePicture, takePictureCount(%d)",
                 __FUNCTION__, __LINE__, m_takePictureCounter.getCount());
         m_takePictureCounter.decCount();
 
@@ -1355,7 +1355,7 @@ status_t ExynosCamera::takePicture()
 
 status_t ExynosCamera::cancelPicture()
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
 /*
     m_takePictureCounter.clearCount();
@@ -1370,7 +1370,7 @@ status_t ExynosCamera::cancelPicture()
 status_t ExynosCamera::setParameters(const CameraParameters& params)
 {
     status_t ret = NO_ERROR;
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
 #ifdef SCALABLE_ON
     m_exynosCameraParameters->setScalableSensorMode(true);
@@ -1385,7 +1385,7 @@ status_t ExynosCamera::setParameters(const CameraParameters& params)
         m_resetPreview = true;
         ret = m_restartPreviewInternal();
         m_resetPreview = false;
-        ALOGI("INFO(%s[%d]) m_resetPreview(%d)", __FUNCTION__, __LINE__, m_resetPreview);
+        ALOGV("INFO(%s[%d]) m_resetPreview(%d)", __FUNCTION__, __LINE__, m_resetPreview);
 
         if (ret < 0)
             ALOGE("(%s[%d]): restart preview internal fail", __FUNCTION__, __LINE__);
@@ -1397,7 +1397,7 @@ status_t ExynosCamera::setParameters(const CameraParameters& params)
 
 CameraParameters ExynosCamera::getParameters() const
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     return m_exynosCameraParameters->getParameters();
 }
@@ -1704,7 +1704,7 @@ status_t ExynosCamera::sendCommand(int32_t command, int32_t arg1, int32_t arg2)
 {
     ExynosCameraActivityUCTL *uctlMgr = NULL;
 
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
 
     /* TO DO : implemented based on the command */
     switch(command) {
@@ -2011,7 +2011,7 @@ status_t ExynosCamera::m_startPreviewInternal(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
 
-    ALOGI("DEBUG(%s[%d]):IN", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):IN", __FUNCTION__, __LINE__);
 
     uint32_t minFrameNum = 0;
     int ret = 0;
@@ -2154,7 +2154,7 @@ status_t ExynosCamera::m_startPreviewInternal(void)
         m_exynosCameraParameters->setFocusModeSetting(false);
     }
 
-    ALOGI("DEBUG(%s[%d]):OUT", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):OUT", __FUNCTION__, __LINE__);
 
     return NO_ERROR;
 }
@@ -2163,7 +2163,7 @@ status_t ExynosCamera::m_stopPreviewInternal(void)
 {
     int ret = 0;
 
-    ALOGI("DEBUG(%s[%d]):IN", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):IN", __FUNCTION__, __LINE__);
 
     ret = m_previewFrameFactory->stopPipes();
     if (ret < 0) {
@@ -2188,7 +2188,7 @@ status_t ExynosCamera::m_stopPreviewInternal(void)
     m_previewEnabled = false;
     m_exynosCameraParameters->setPreviewRunning(m_previewEnabled);
 
-    ALOGI("DEBUG(%s[%d]):OUT", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):OUT", __FUNCTION__, __LINE__);
 
     return NO_ERROR;
 }
@@ -2215,10 +2215,10 @@ status_t ExynosCamera::m_startPictureInternal(void)
     if (getCameraId() == CAMERA_ID_BACK) {
         if( m_exynosCameraParameters->getHighSpeedRecording() ) {
             m_exynosCameraParameters->getHwSensorSize(&hwPictureW, &hwPictureH);
-            ALOGI("(%s):HW Picture(HighSpeed) width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
+            ALOGV("(%s):HW Picture(HighSpeed) width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
         } else {
             m_exynosCameraParameters->getMaxSensorSize(&hwPictureW, &hwPictureH);
-            ALOGI("(%s):HW Picture width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
+            ALOGV("(%s):HW Picture width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
         }
 
         planeSize[0] = ALIGN_UP(hwPictureW, GSCALER_IMG_ALIGN) * ALIGN_UP(hwPictureH, GSCALER_IMG_ALIGN) * 2;
@@ -2286,7 +2286,7 @@ status_t ExynosCamera::m_startPictureInternal(void)
 
 status_t ExynosCamera::m_stopPictureInternal(void)
 {
-    ALOGI("INFO(%s[%d])", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d])", __FUNCTION__, __LINE__);
     int ret = 0;
 
     m_prePictureThread->join();
@@ -2348,9 +2348,9 @@ status_t ExynosCamera::m_startRecordingInternal(void)
 
     m_doCscRecording = true;
     if (m_exynosCameraParameters->doCscRecording() == true) {
-        ALOGI("INFO(%s[%d]):do Recording CSC !!!", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):do Recording CSC !!!", __FUNCTION__, __LINE__);
     } else {
-        ALOGI("INFO(%s[%d]):skip Recording CSC !!!", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):skip Recording CSC !!!", __FUNCTION__, __LINE__);
         m_doCscRecording = false;
     }
 
@@ -2416,7 +2416,7 @@ status_t ExynosCamera::m_stopRecordingInternal(void)
 
 status_t ExynosCamera::m_restartPreviewInternal(void)
 {
-    ALOGI("INFO(%s[%d]): Internal restart preview", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): Internal restart preview", __FUNCTION__, __LINE__);
     int ret = 0;
     int err = 0;
 
@@ -2538,7 +2538,7 @@ status_t ExynosCamera::m_restartPreviewInternal(void)
         err = ret;
     }
 
-    ALOGI("INFO(%s[%d]):setBuffersThread is run", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):setBuffersThread is run", __FUNCTION__, __LINE__);
     m_setBuffersThread->run(PRIORITY_DEFAULT);
     m_setBuffersThread->join();
 
@@ -3707,7 +3707,7 @@ bool ExynosCamera::m_prePictureThreadFunc(void)
 bool ExynosCamera::m_prePictureInternal(bool* pIsProcessed)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
-    ALOGI("DEBUG(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):", __FUNCTION__, __LINE__);
 
     int ret = 0;
     bool loop = false;
@@ -3750,7 +3750,7 @@ bool ExynosCamera::m_prePictureInternal(bool* pIsProcessed)
 
     m_reprocessingCounter.decCount();
 
-    ALOGI("INFO(%s[%d]):prePicture complete, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
+    ALOGV("INFO(%s[%d]):prePicture complete, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
 
     if (m_hdrEnabled) {
         ExynosCameraActivitySpecialCapture *m_sCaptureMgr;
@@ -3796,7 +3796,7 @@ CLEAN:
     if (m_reprocessingCounter.getCount() > 0)
         loop = true;
 
-    ALOGI("INFO(%s[%d]): prePicture fail, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
+    ALOGV("INFO(%s[%d]): prePicture fail, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
     *pIsProcessed = false;   // Notify failure
     return loop;
 
@@ -3805,7 +3805,7 @@ CLEAN:
 bool ExynosCamera::m_reprocessingPrePictureInternal(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
-    ALOGI("DEBUG(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):", __FUNCTION__, __LINE__);
 
     int ret = 0;
     bool loop = false;
@@ -3930,14 +3930,14 @@ bool ExynosCamera::m_reprocessingPrePictureInternal(void)
                                                                                     node_group_info.capture[PERFRAME_REPROCESSING_SCC_POS].output.cropRegion[3]);
 
         if (node_group_info.leader.output.cropRegion[2] < node_group_info.capture[PERFRAME_REPROCESSING_SCC_POS].input.cropRegion[2]) {
-            ALOGI("INFO(%s[%d]:(%d -> %d))", __FUNCTION__, __LINE__,
+            ALOGV("INFO(%s[%d]:(%d -> %d))", __FUNCTION__, __LINE__,
                 node_group_info.capture[PERFRAME_REPROCESSING_SCC_POS].input.cropRegion[2],
                 node_group_info.leader.output.cropRegion[2]);
 
             node_group_info.capture[PERFRAME_REPROCESSING_SCC_POS].input.cropRegion[2] = node_group_info.leader.output.cropRegion[2];
         }
         if (node_group_info.leader.output.cropRegion[3] < node_group_info.capture[PERFRAME_REPROCESSING_SCC_POS].input.cropRegion[3]) {
-            ALOGI("INFO(%s[%d]:(%d -> %d))", __FUNCTION__, __LINE__,
+            ALOGV("INFO(%s[%d]:(%d -> %d))", __FUNCTION__, __LINE__,
                 node_group_info.capture[PERFRAME_REPROCESSING_SCC_POS].input.cropRegion[3],
                 node_group_info.leader.output.cropRegion[3]);
 
@@ -4051,7 +4051,7 @@ bool ExynosCamera::m_reprocessingPrePictureInternal(void)
         m_reprocessingFrameFactory->startThread(bayerPipeId);
 
     /* wait ISP done */
-    ALOGI("INFO(%s[%d]):wait ISP output", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):wait ISP output", __FUNCTION__, __LINE__);
     ret = dstIspReprocessingQ->waitAndPopProcessQ(&newFrame);
     if (ret < 0) {
         ALOGE("ERR(%s[%d]):ISP wait and pop fail, ret(%d)", __FUNCTION__, __LINE__, ret);
@@ -4069,7 +4069,7 @@ bool ExynosCamera::m_reprocessingPrePictureInternal(void)
         return ret;
     }
 
-    ALOGI("INFO(%s[%d]):ISP output done", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):ISP output done", __FUNCTION__, __LINE__);
 
     newFrame->setMetaDataEnable(true);
 
@@ -4104,7 +4104,7 @@ bool ExynosCamera::m_reprocessingPrePictureInternal(void)
 
     m_reprocessingCounter.decCount();
 
-    ALOGI("INFO(%s[%d]):reprocessing complete, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
+    ALOGV("INFO(%s[%d]):reprocessing complete, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
 
     if (m_hdrEnabled) {
         ExynosCameraActivitySpecialCapture *m_sCaptureMgr;
@@ -4170,7 +4170,7 @@ CLEAN:
     if (m_reprocessingCounter.getCount() > 0)
         loop = true;
 
-    ALOGI("INFO(%s[%d]): reprocessing fail, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
+    ALOGV("INFO(%s[%d]): reprocessing fail, remaining count(%d)", __FUNCTION__, __LINE__, m_reprocessingCounter.getCount());
 
     return loop;
 }
@@ -4178,7 +4178,7 @@ CLEAN:
 bool ExynosCamera::m_pictureThreadFunc(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
-    ALOGI("INFO(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):", __FUNCTION__, __LINE__);
 
     int ret = 0;
     int loop = false;
@@ -4219,7 +4219,7 @@ bool ExynosCamera::m_pictureThreadFunc(void)
     }
 
     /* wait SCC */
-    ALOGI("INFO(%s[%d]):wait SCC output", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):wait SCC output", __FUNCTION__, __LINE__);
     int retry = 0;
     do {
         ret = dstSccReprocessingQ->waitAndPopProcessQ(&newFrame);
@@ -4248,7 +4248,7 @@ bool ExynosCamera::m_pictureThreadFunc(void)
         }
     }
 
-    ALOGI("INFO(%s[%d]):SCC output done, frame Count(%d)", __FUNCTION__, __LINE__, newFrame->getFrameCount());
+    ALOGV("INFO(%s[%d]):SCC output done, frame Count(%d)", __FUNCTION__, __LINE__, newFrame->getFrameCount());
 
     if (needGSCForCapture(getCameraId()) == true) {
         /* set GSC buffer */
@@ -4357,7 +4357,7 @@ bool ExynosCamera::m_pictureThreadFunc(void)
 
         /* wait GSC */
         newFrame = NULL;
-        ALOGI("INFO(%s[%d]):wait GSC output", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):wait GSC output", __FUNCTION__, __LINE__);
         ret = dstGscReprocessingQ->waitAndPopProcessQ(&newFrame);
         if (ret < 0) {
             ALOGE("ERR(%s)(%d):wait and pop fail, ret(%d)", __FUNCTION__, __LINE__, ret);
@@ -4368,7 +4368,7 @@ bool ExynosCamera::m_pictureThreadFunc(void)
             ALOGE("ERR(%s):newFrame is NULL", __FUNCTION__);
             goto CLEAN;
         }
-        ALOGI("INFO(%s[%d]):GSC output done", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):GSC output done", __FUNCTION__, __LINE__);
 
         /* put SCC buffer */
         ret = newFrame->getDstBuffer(pipeId_scc, &sccReprocessingBuffer);
@@ -4391,13 +4391,13 @@ bool ExynosCamera::m_pictureThreadFunc(void)
 
     /* Shutter Callback */
     if (m_exynosCameraParameters->msgTypeEnabled(CAMERA_MSG_SHUTTER)) {
-        ALOGI("INFO(%s[%d]): CAMERA_MSG_SHUTTER callback ", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]): CAMERA_MSG_SHUTTER callback ", __FUNCTION__, __LINE__);
         m_notifyCb(CAMERA_MSG_SHUTTER, 0, 0, m_callbackCookie);
     }
 
     m_pictureCounter.decCount();
 
-    ALOGI("INFO(%s[%d]):picture thread complete, remaining count(%d)", __FUNCTION__, __LINE__, m_pictureCounter.getCount());
+    ALOGV("INFO(%s[%d]):picture thread complete, remaining count(%d)", __FUNCTION__, __LINE__, m_pictureCounter.getCount());
 
     if (m_pictureCounter.getCount() > 0) {
         loop = true;
@@ -4437,7 +4437,7 @@ CLEAN:
     }
 #endif
 
-    ALOGI("INFO(%s[%d]):take picture fail, remaining count(%d)", __FUNCTION__, __LINE__, m_pictureCounter.getCount());
+    ALOGV("INFO(%s[%d]):take picture fail, remaining count(%d)", __FUNCTION__, __LINE__, m_pictureCounter.getCount());
 
     if (m_pictureCounter.getCount() > 0)
         loop = true;
@@ -4448,7 +4448,7 @@ CLEAN:
 
 camera_memory_t *ExynosCamera::m_getJpegCallbackHeap(ExynosCameraBuffer jpegBuf, int seriesShotNumber)
 {
-    ALOGI("INFO(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):", __FUNCTION__, __LINE__);
 
     camera_memory_t *jpegCallbackHeap = NULL;
 
@@ -4485,7 +4485,7 @@ done:
 bool ExynosCamera::m_postPictureThreadFunc(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
-    ALOGI("INFO(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):", __FUNCTION__, __LINE__);
 
     int ret = 0;
     int loop = false;
@@ -4540,7 +4540,7 @@ bool ExynosCamera::m_postPictureThreadFunc(void)
         return ret;
     }
 
-    ALOGI("INFO(%s[%d]):wait postPictureQ output", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):wait postPictureQ output", __FUNCTION__, __LINE__);
     ret = m_postPictureQ->waitAndPopProcessQ(&newFrame);
     if (ret < 0) {
         ALOGE("ERR(%s[%d]):wait and pop fail, ret(%d)", __FUNCTION__, __LINE__, ret);
@@ -4557,7 +4557,7 @@ bool ExynosCamera::m_postPictureThreadFunc(void)
         goto CLEAN;
     }
 
-    ALOGI("INFO(%s[%d]):postPictureQ output done", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):postPictureQ output done", __FUNCTION__, __LINE__);
 
     /* put picture callback buffer */
     /* get gsc dst buffers */
@@ -4635,7 +4635,7 @@ bool ExynosCamera::m_postPictureThreadFunc(void)
                 retry++;
 
                 if (m_pictureEnabled == false) {
-                    ALOGI("INFO(%s[%d]):m_pictureEnable is false", __FUNCTION__, __LINE__);
+                    ALOGV("INFO(%s[%d]):m_pictureEnable is false", __FUNCTION__, __LINE__);
                     goto CLEAN;
                 }
                 if (m_jpegBufferMgr->getNumOfAvailableBuffer() > 0)
@@ -4680,7 +4680,7 @@ bool ExynosCamera::m_postPictureThreadFunc(void)
             m_pictureFrameFactory->pushFrameToPipe(&newFrame, pipeId_jpeg);
 
             /* 5. wait outputQ */
-            ALOGI("INFO(%s[%d]):wait Jpeg output", __FUNCTION__, __LINE__);
+            ALOGV("INFO(%s[%d]):wait Jpeg output", __FUNCTION__, __LINE__);
             ret = dstJpegReprocessingQ->waitAndPopProcessQ(&newFrame);
             if (ret < 0) {
                 ALOGE("ERR(%s[%d]):wait and pop fail, ret(%d)", __FUNCTION__, __LINE__, ret);
@@ -4710,7 +4710,7 @@ bool ExynosCamera::m_postPictureThreadFunc(void)
             }
 
             int jpegOutputSize = newFrame->getJpegSize();
-            ALOGI("INFO(%s[%d]):Jpeg output done, jpeg size(%d)", __FUNCTION__, __LINE__, jpegOutputSize);
+            ALOGV("INFO(%s[%d]):Jpeg output done, jpeg size(%d)", __FUNCTION__, __LINE__, jpegOutputSize);
 
             if (jpegOutputSize <= 0) {
                 ALOGW("WRN(%s[%d]): jpegOutput size(%d) is invalid", __FUNCTION__, __LINE__, jpegOutputSize);
@@ -4765,17 +4765,17 @@ retry:
         }
     }
 
-    ALOGI("INFO(%s[%d]):postPicture thread complete, remaining count(%d)", __FUNCTION__, __LINE__, m_jpegCounter.getCount());
+    ALOGV("INFO(%s[%d]):postPicture thread complete, remaining count(%d)", __FUNCTION__, __LINE__, m_jpegCounter.getCount());
 
     if (m_jpegCounter.getCount() <= 0) {
         if (m_hdrEnabled == true) {
-            ALOGI("INFO(%s[%d]): End of HDR capture!", __FUNCTION__, __LINE__);
+            ALOGV("INFO(%s[%d]): End of HDR capture!", __FUNCTION__, __LINE__);
             m_hdrEnabled = false;
             m_pictureEnabled = false;
         }
         if (currentSeriesShotMode == SERIES_SHOT_MODE_LLS ||
             currentSeriesShotMode == SERIES_SHOT_MODE_SIS) {
-            ALOGI("INFO(%s[%d]): End of LLS/SIS capture!", __FUNCTION__, __LINE__);
+            ALOGV("INFO(%s[%d]): End of LLS/SIS capture!", __FUNCTION__, __LINE__);
             m_pictureEnabled = false;
         }
 
@@ -4821,7 +4821,7 @@ CLEAN:
 bool ExynosCamera::m_jpegCallbackThreadFunc(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
-    ALOGI("DEBUG(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("DEBUG(%s[%d]):", __FUNCTION__, __LINE__);
 
     int ret = 0;
     int retry = 0, maxRetry = 0;
@@ -4885,7 +4885,7 @@ bool ExynosCamera::m_jpegCallbackThreadFunc(void)
     }
 
 CLEAN:
-    ALOGI("INFO(%s[%d]):jpeg callback thread complete, remaining count(%d)", __FUNCTION__, __LINE__, m_takePictureCounter.getCount());
+    ALOGV("INFO(%s[%d]):jpeg callback thread complete, remaining count(%d)", __FUNCTION__, __LINE__, m_takePictureCounter.getCount());
     if (m_takePictureCounter.getCount() == 0) {
         m_pictureEnabled = false;
         m_clearJpegCallbackThread();
@@ -4902,7 +4902,7 @@ void ExynosCamera::m_clearJpegCallbackThread(void)
     jpeg_callback_buffer_t jpegCallbackBuf;
     ExynosCameraBuffer jpegCallbackBuffer;
 
-    ALOGI("INFO(%s[%d]): takePicture disabled, takePicture callback done takePictureCounter(%d)",
+    ALOGV("INFO(%s[%d]): takePicture disabled, takePicture callback done takePictureCounter(%d)",
             __FUNCTION__, __LINE__, m_takePictureCounter.getCount());
     m_pictureEnabled = false;
 
@@ -4916,16 +4916,16 @@ void ExynosCamera::m_clearJpegCallbackThread(void)
     m_postPictureThread->requestExit();
     m_jpegCallbackThread->requestExit();
 
-    ALOGI("INFO(%s[%d]): wait m_prePictureThrad", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): wait m_prePictureThrad", __FUNCTION__, __LINE__);
     m_prePictureThread->requestExitAndWait();
-    ALOGI("INFO(%s[%d]): wait m_pictureThrad", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): wait m_pictureThrad", __FUNCTION__, __LINE__);
     m_pictureThread->requestExitAndWait();
-    ALOGI("INFO(%s[%d]): wait m_postPictureThrad", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): wait m_postPictureThrad", __FUNCTION__, __LINE__);
     m_postPictureThread->requestExitAndWait();
-    ALOGI("INFO(%s[%d]): wait m_jpegCallbackThrad", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): wait m_jpegCallbackThrad", __FUNCTION__, __LINE__);
     m_jpegCallbackThread->requestExitAndWait();
 
-    ALOGI("INFO(%s[%d]): All picture threads done", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): All picture threads done", __FUNCTION__, __LINE__);
 
     while (m_jpegCallbackQ->getSizeOfProcessQ() > 0) {
         m_jpegCallbackQ->popProcessQ(&jpegCallbackBuf);
@@ -4985,7 +4985,7 @@ void ExynosCamera::m_clearJpegCallbackThread(void)
 bool ExynosCamera::m_highResolutionCallbackThreadFunc(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
-    ALOGI("INFO(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):", __FUNCTION__, __LINE__);
 
     int ret = 0;
     int loop = false;
@@ -5114,7 +5114,7 @@ bool ExynosCamera::m_highResolutionCallbackThreadFunc(void)
         m_pictureFrameFactory->setOutputFrameQToPipe(dstGscReprocessingQ, pipeId_gsc);
 
         /* wait GSC for high resolution preview callback */
-        ALOGI("INFO(%s[%d]):wait GSC output", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):wait GSC output", __FUNCTION__, __LINE__);
         ret = dstGscReprocessingQ->waitAndPopProcessQ(&newFrame);
         if (ret < 0) {
             ALOGE("ERR(%s)(%d):wait and pop fail, ret(%d)", __FUNCTION__, __LINE__, ret);
@@ -5125,7 +5125,7 @@ bool ExynosCamera::m_highResolutionCallbackThreadFunc(void)
             ALOGE("ERR(%s):newFrame is NULL", __FUNCTION__);
             goto CLEAN;
         }
-        ALOGI("INFO(%s[%d]):GSC output done", __FUNCTION__, __LINE__);
+        ALOGV("INFO(%s[%d]):GSC output done", __FUNCTION__, __LINE__);
 
         /* put SCC buffer */
         ret = newFrame->getDstBuffer(pipeId_scc, &sccReprocessingBuffer);
@@ -5173,7 +5173,7 @@ bool ExynosCamera::m_highResolutionCallbackThreadFunc(void)
         loop = true;
     }
 
-    ALOGI("INFO(%s[%d]):high resolution callback thread complete", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):high resolution callback thread complete", __FUNCTION__, __LINE__);
 
     /* one shot */
     return loop;
@@ -5203,7 +5203,7 @@ CLEAN:
     if (m_highResolutionCallbackQ->getSizeOfProcessQ() > 0)
         loop = true;
 
-    ALOGI("INFO(%s[%d]):high resolution callback thread fail", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):high resolution callback thread fail", __FUNCTION__, __LINE__);
 
     /* one shot */
     return loop;
@@ -5306,7 +5306,7 @@ bool ExynosCamera::m_recordingThreadFunc(void)
 
     if (m_recordingStartTimeStamp == 0) {
         m_recordingStartTimeStamp = timeStamp;
-        ALOGI("INFO(%s[%d]):m_recordingStartTimeStamp=%lld",
+        ALOGV("INFO(%s[%d]):m_recordingStartTimeStamp=%lld",
                 __FUNCTION__, __LINE__, m_recordingStartTimeStamp);
     }
 
@@ -5525,7 +5525,7 @@ status_t ExynosCamera::m_printFrameList(List<ExynosCameraFrame *> *list)
     do {
         curFrame = *r;
         if (curFrame != NULL) {
-            ALOGI("\t hal frame count %d", curFrame->getFrameCount() );
+            ALOGV("\t hal frame count %d", curFrame->getFrameCount() );
             curFrame->printEntity();
         }
 
@@ -5542,7 +5542,7 @@ status_t ExynosCamera::m_createIonAllocator(ExynosCameraIonAllocator **allocator
     int retry = 0;
     do {
         retry++;
-        ALOGI("INFO(%s[%d]):try(%d) to create IonAllocator", __FUNCTION__, __LINE__, retry);
+        ALOGV("INFO(%s[%d]):try(%d) to create IonAllocator", __FUNCTION__, __LINE__, retry);
         *allocator = new ExynosCameraIonAllocator();
         ret = (*allocator)->init(false);
         if (ret < 0)
@@ -5651,7 +5651,7 @@ status_t ExynosCamera::m_setBuffers(void)
 {
     ExynosCameraAutoTimer autoTimer(__FUNCTION__);
 
-    ALOGI("INFO(%s[%d]):alloc buffer - camera ID: %d",
+    ALOGV("INFO(%s[%d]):alloc buffer - camera ID: %d",
         __FUNCTION__, __LINE__, m_cameraId);
     int ret = 0;
     unsigned int bytesPerLine[EXYNOS_CAMERA_BUFFER_MAX_PLANES] = {0};
@@ -5675,19 +5675,19 @@ status_t ExynosCamera::m_setBuffers(void)
 #endif
 
     m_exynosCameraParameters->getHwPreviewSize(&hwPreviewW, &hwPreviewH);
-    ALOGI("(%s):HW Preview width x height = %dx%d", __FUNCTION__, hwPreviewW, hwPreviewH);
+    ALOGV("(%s):HW Preview width x height = %dx%d", __FUNCTION__, hwPreviewW, hwPreviewH);
     m_exynosCameraParameters->getHwPictureSize(&hwPictureW, &hwPictureH);
-    ALOGI("(%s):HW Picture width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
+    ALOGV("(%s):HW Picture width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
     if( m_exynosCameraParameters->getHighSpeedRecording() ) {
         m_exynosCameraParameters->getHwSensorSize(&sensorMaxW, &sensorMaxH);
-        ALOGI("(%s):HW Sensor(HighSpeed) MAX width x height = %dx%d", __FUNCTION__, sensorMaxW, sensorMaxH);
+        ALOGV("(%s):HW Sensor(HighSpeed) MAX width x height = %dx%d", __FUNCTION__, sensorMaxW, sensorMaxH);
         m_exynosCameraParameters->getHwPreviewSize(&previewMaxW, &previewMaxH);
-        ALOGI("(%s):HW Preview(HighSpeed) MAX width x height = %dx%d", __FUNCTION__, previewMaxW, previewMaxH);
+        ALOGV("(%s):HW Preview(HighSpeed) MAX width x height = %dx%d", __FUNCTION__, previewMaxW, previewMaxH);
     } else {
         m_exynosCameraParameters->getMaxSensorSize(&sensorMaxW, &sensorMaxH);
-        ALOGI("(%s):HW Sensor MAX width x height = %dx%d", __FUNCTION__, sensorMaxW, sensorMaxH);
+        ALOGV("(%s):HW Sensor MAX width x height = %dx%d", __FUNCTION__, sensorMaxW, sensorMaxH);
         m_exynosCameraParameters->getMaxPreviewSize(&previewMaxW, &previewMaxH);
-        ALOGI("(%s):HW Preview MAX width x height = %dx%d", __FUNCTION__, previewMaxW, previewMaxH);
+        ALOGV("(%s):HW Preview MAX width x height = %dx%d", __FUNCTION__, previewMaxW, previewMaxH);
     }
 
     /* FLITE */
@@ -5817,7 +5817,7 @@ status_t ExynosCamera::m_setBuffers(void)
 #ifdef USE_BUFFER_WITH_STRIDE
     int stride = m_scpBufferMgr->getBufStride();
     if (stride != hwPreviewW) {
-        ALOGI("INFO(%s[%d]):hwPreviewW(%d), stride(%d)", __FUNCTION__, __LINE__, hwPreviewW, stride);
+        ALOGV("INFO(%s[%d]):hwPreviewW(%d), stride(%d)", __FUNCTION__, __LINE__, hwPreviewW, stride);
         if (stride == 0) {
             /* If the SCP buffer manager is not instance of GrallocExynosCameraBufferManager
                (In case of setPreviewWindow(null) is called), return value of setHwPreviewStride()
@@ -5833,7 +5833,7 @@ status_t ExynosCamera::m_setBuffers(void)
 
     if (getCameraId() == CAMERA_ID_FRONT) {
         m_exynosCameraParameters->getHwPictureSize(&hwPictureW, &hwPictureH);
-        ALOGI("(%s):HW Picture width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
+        ALOGV("(%s):HW Picture width x height = %dx%d", __FUNCTION__, hwPictureW, hwPictureH);
         planeSize[0] = ALIGN_UP(hwPictureW, GSCALER_IMG_ALIGN) * ALIGN_UP(hwPictureH, GSCALER_IMG_ALIGN) * 2;
         planeCount  = 2;
         /* TO DO : make same num of buffers */
@@ -5850,7 +5850,7 @@ status_t ExynosCamera::m_setBuffers(void)
         }
     }
 
-    ALOGI("INFO(%s[%d]):alloc buffer done - camera ID: %d",
+    ALOGV("INFO(%s[%d]):alloc buffer done - camera ID: %d",
         __FUNCTION__, __LINE__, m_cameraId);
 
     return NO_ERROR;
@@ -5870,7 +5870,7 @@ status_t ExynosCamera::m_setReprocessingBuffer(void)
     buffer_manager_allocation_mode_t allocMode = BUFFER_MANAGER_ALLOCATION_ONDEMAND;
 
     m_exynosCameraParameters->getMaxPictureSize(&pictureMaxW, &pictureMaxH);
-    ALOGI("(%s):HW Picture MAX width x height = %dx%d", __FUNCTION__, pictureMaxW, pictureMaxH);
+    ALOGV("(%s):HW Picture MAX width x height = %dx%d", __FUNCTION__, pictureMaxW, pictureMaxH);
 
     /* for reprocessing */
 #ifdef CAMERA_PACKED_BAYER_ENABLE
@@ -6021,7 +6021,7 @@ status_t ExynosCamera::m_setPictureBuffer(void)
 
 status_t ExynosCamera::m_releaseBuffers(void)
 {
-    ALOGI("INFO(%s[%d]):release buffer", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):release buffer", __FUNCTION__, __LINE__);
     int ret = 0;
 
     if (m_bayerBufferMgr != NULL) {
@@ -6062,7 +6062,7 @@ status_t ExynosCamera::m_releaseBuffers(void)
         m_highResolutionCallbackBufferMgr->deinit();
     }
 
-    ALOGI("INFO(%s[%d]):free buffer done", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):free buffer done", __FUNCTION__, __LINE__);
 
     return NO_ERROR;
 }
@@ -6151,7 +6151,7 @@ status_t ExynosCamera::m_allocBuffers(
 {
     int ret = 0;
 
-    ALOGI("INFO(%s[%d]):setInfo(planeCount=%d, minBufCount=%d, maxBufCount=%d, type=%d, allocMode=%d)",
+    ALOGV("INFO(%s[%d]):setInfo(planeCount=%d, minBufCount=%d, maxBufCount=%d, type=%d, allocMode=%d)",
         __FUNCTION__, __LINE__, planeCount, minBufCount, maxBufCount, (int)type, (int)allocMode);
 
     ret = bufManager->setInfo(
@@ -6317,7 +6317,7 @@ bool ExynosCamera::m_autoFocusResetNotify(int focusMode)
 
 bool ExynosCamera::m_autoFocusThreadFunc(void)
 {
-    ALOGI("INFO(%s[%d]): -IN-", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]): -IN-", __FUNCTION__, __LINE__);
 
     bool afResult = false;
     int focusMode = 0;
@@ -6391,21 +6391,21 @@ bool ExynosCamera::m_autoFocusThreadFunc(void)
 done:
     m_autoFocusLock.unlock();
 
-    ALOGI("DEBUG(%s):end", __FUNCTION__);
+    ALOGV("DEBUG(%s):end", __FUNCTION__);
 
     return false;
 }
 
 status_t ExynosCamera::dump(int fd) const
 {
-    ALOGI("INFO(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):", __FUNCTION__, __LINE__);
 
     return NO_ERROR;
 }
 
 void ExynosCamera::dump()
 {
-    ALOGI("INFO(%s[%d]):", __FUNCTION__, __LINE__);
+    ALOGV("INFO(%s[%d]):", __FUNCTION__, __LINE__);
 
     if (m_previewFrameFactory != NULL)
         m_previewFrameFactory->dump();
@@ -6557,7 +6557,7 @@ void ExynosCamera::m_debugFpsCheck(uint32_t pipeId)
     if (m_debugFpsCount[id] == 30) {
         m_debugFpsTimer[id].stop();
         long long durationTime = m_debugFpsTimer[id].durationMsecs();
-        ALOGI("DEBUG: FPS_CHECK(id:%d), duration %lld / 30 = %lld ms", pipeId, durationTime, durationTime / 30);
+        ALOGV("DEBUG: FPS_CHECK(id:%d), duration %lld / 30 = %lld ms", pipeId, durationTime, durationTime / 30);
         m_debugFpsCount[id] = 0;
     }
 #endif
