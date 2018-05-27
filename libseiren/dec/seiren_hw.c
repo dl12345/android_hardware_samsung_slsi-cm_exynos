@@ -30,7 +30,7 @@
 
 #include "seiren_hw.h"
 
-#define LOG_NDEBUG 1
+//#define LOG_NDEBUG 0
 #define LOG_TAG "libseirenhw"
 #include <utils/Log.h>
 
@@ -77,7 +77,7 @@ int ADec_Create(u32 ulPlayerID, SEIREN_IPTYPE ipType, u32* pulHandle)
         for (i = 0; i<MAX_INSTANCE; i++)
             inst_info[i].handle = -1;
         created = 1;
-        ALOGD("%s: initialized", __func__);
+        ALOGV("%s: initialized", __func__);
     }
 
     index = ADec_allocIdx();
@@ -87,7 +87,7 @@ int ADec_Create(u32 ulPlayerID, SEIREN_IPTYPE ipType, u32* pulHandle)
     }
 
     seiren_dev = open(ADEC_DEV_NAME, O_RDWR);
-    ALOGD("%s: called. handle:%d", __func__, seiren_dev);
+    ALOGV("%s: called. handle:%d", __func__, seiren_dev);
     if (seiren_dev >= 0) {
         ret = ioctl(seiren_dev, SEIREN_IOCTL_CH_CREATE, ipType);
         if (ret != 0) {
@@ -95,7 +95,7 @@ int ADec_Create(u32 ulPlayerID, SEIREN_IPTYPE ipType, u32* pulHandle)
             goto EXIT_ERROR;
         }
         inst_info[index].handle = seiren_dev;
-        ALOGD("%s: successed to open AudH, index:%d", __func__,index);
+        ALOGV("%s: successed to open AudH, index:%d", __func__,index);
     }
     else {
         ALOGE("%s: failed to open AudH", __func__);
@@ -119,7 +119,7 @@ int ADec_Destroy(u32 ulHandle)
         return -1;
     }
 
-    ALOGD("%s: index:%d,ibuf_addr:%p,obuf_addr:%p", __func__,
+    ALOGV("%s: index:%d,ibuf_addr:%p,obuf_addr:%p", __func__,
            index, inst_info[index].ibuf_addr, inst_info[index].obuf_addr);
     inst_info[index].handle = -1;
     free(inst_info[index].ibuf_addr);
@@ -129,14 +129,14 @@ int ADec_Destroy(u32 ulHandle)
     if (ret != 0)
         ALOGE("%s: ch_destroy ret: %d", __func__, ret);
 
-    ALOGD("%s: called, handle:%d", __func__, ulHandle);
+    ALOGV("%s: called, handle:%d", __func__, ulHandle);
 
     if (close(ulHandle) != 0) {
         ALOGE("%s: failed to close", __func__);
         return -1;
     }
     else {
-        ALOGD("%s: successed to close", __func__);
+        ALOGV("%s: successed to close", __func__);
     }
 
     return 0;
@@ -159,7 +159,7 @@ int ADec_DoEQ(u32 ulHandle, audio_mem_info_t* pMemInfo)
 {
     int index = ADec_getIdx(ulHandle);
 
-    ALOGD("%s: handle:%d, buf_addr[%p], buf_size[%d]", __func__,
+    ALOGV("%s: handle:%d, buf_addr[%p], buf_size[%d]", __func__,
                ulHandle, pMemInfo->virt_addr, pMemInfo->mem_size);
     ioctl(ulHandle, SEIREN_IOCTL_CH_EXE, pMemInfo);
 
@@ -187,7 +187,7 @@ int ADec_SetParams(u32 ulHandle, SEIREN_PARAMCMD paramCmd, unsigned long pulValu
     u32 cmd = paramCmd << 16;
     cmd |= SEIREN_IOCTL_CH_SET_PARAMS;
 
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, cmd, pulValues);
 
     return 0;
@@ -199,7 +199,7 @@ int ADec_GetParams(u32 ulHandle, SEIREN_PARAMCMD paramCmd, unsigned long *pulVal
 
     cmd |= SEIREN_IOCTL_CH_GET_PARAMS;
     ioctl(ulHandle, cmd, pulValues);
-    ALOGD("%s: val:%lu. handle:%d", __func__, *pulValues, ulHandle);
+    ALOGV("%s: val:%lu. handle:%d", __func__, *pulValues, ulHandle);
 
     return 0;
 }
@@ -209,7 +209,7 @@ int ADec_SendEOS(u32 ulHandle)
     u32 cmd = ADEC_PARAM_SET_EOS << 16;
     cmd |= SEIREN_IOCTL_CH_SET_PARAMS;
 
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, cmd);
 
     return 0;
@@ -217,7 +217,7 @@ int ADec_SendEOS(u32 ulHandle)
 
 int ADec_Flush(u32 ulHandle, SEIREN_PORTTYPE portType)
 {
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, SEIREN_IOCTL_CH_FLUSH, portType);
 
     return 0;
@@ -225,7 +225,7 @@ int ADec_Flush(u32 ulHandle, SEIREN_PORTTYPE portType)
 
 int ADec_ConfigSignal(u32 ulHandle)
 {
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, SEIREN_IOCTL_CH_CONFIG);
 
     return 0;
@@ -236,7 +236,7 @@ int ADec_GetPCMParams(u32 ulHandle, u32* pulValues)
     u32 cmd = PCM_CONFIG_INFO << 16;
     cmd |= SEIREN_IOCTL_CH_GET_PARAMS;
 
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, cmd, &pulValues);
 
     return 0;
@@ -253,7 +253,7 @@ int ADec_GetIMemPoolInfo(u32 ulHandle, audio_mem_info_t* pIMemPoolInfo)
         return -1;
     }
 
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, cmd, &ibuf_info);
 
     ibuf_info.virt_addr = malloc(ibuf_info.mem_size);
@@ -263,7 +263,7 @@ int ADec_GetIMemPoolInfo(u32 ulHandle, audio_mem_info_t* pIMemPoolInfo)
     pIMemPoolInfo->mem_size = ibuf_info.mem_size;
     pIMemPoolInfo->block_count = ibuf_info.block_count;
 
-    ALOGD("%s: I_vaddr[%p], I_paddr[%p], I_size[%d], I_cnt[%d]",
+    ALOGV("%s: I_vaddr[%p], I_paddr[%p], I_size[%d], I_cnt[%d]",
             __func__,
             ibuf_info.virt_addr,
             ibuf_info.phy_addr,
@@ -284,7 +284,7 @@ int ADec_GetOMemPoolInfo(u32 ulHandle, audio_mem_info_t* pOMemPoolInfo)
         return -1;
     }
 
-    ALOGD("%s: called. handle:%d", __func__, ulHandle);
+    ALOGV("%s: called. handle:%d", __func__, ulHandle);
     ioctl(ulHandle, cmd, &obuf_info);
 
     obuf_info.virt_addr = malloc(obuf_info.mem_size);
@@ -294,7 +294,7 @@ int ADec_GetOMemPoolInfo(u32 ulHandle, audio_mem_info_t* pOMemPoolInfo)
     pOMemPoolInfo->mem_size = obuf_info.mem_size;
     pOMemPoolInfo->block_count = obuf_info.block_count;
 
-    ALOGD("%s: O_vaddr[%p], O_paddr[%p], O_size[%d], O_cnt[%d]",
+    ALOGV("%s: O_vaddr[%p], O_paddr[%p], O_size[%d], O_cnt[%d]",
             __func__,
             obuf_info.virt_addr,
             obuf_info.phy_addr,
